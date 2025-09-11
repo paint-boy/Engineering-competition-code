@@ -15,7 +15,7 @@
 #define Diameter  15.0f
 #define M_PI_F 3.141592653589793f
 
-
+//定义小车速度
 #define	Low_speed     1.0f
 #define	Middle_speed  2.0f
 #define High_speed    3.0f

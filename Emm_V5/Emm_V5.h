@@ -5,6 +5,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdbool.h"
+#include "stdint.h"
 /**********************************************************
 ***	Emm_V5.0步进闭环控制例程
 ***	编写作者：ZHANGDATOU

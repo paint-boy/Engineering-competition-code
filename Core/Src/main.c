@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "Encode.h"
 #include "interurp.h"
+#include "stdint.h"
 
 /* USER CODE END Includes */
 

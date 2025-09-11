@@ -9,6 +9,7 @@
 #include "usart.h"
 #include "stdio.h"
 #include "Control_Car.h"
+#include "stdint.h"
 
 //±àÂëÆ÷ARR×î´óÖµ
 #define Encode_ARR 		65535
