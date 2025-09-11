@@ -1,0 +1,16 @@
+*.log
+*.obj
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.axf
+*.d
+*.iex
+*.htm
+*.tmp
+*.log
+*.dep
+
