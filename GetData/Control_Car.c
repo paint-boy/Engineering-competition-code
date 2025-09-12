@@ -84,7 +84,7 @@ void Sport_Car()
 //Ì¹¿ËÖ÷¿Øº¯Êý
 void Car_Control()
 {
-	Car_Drive_route();
+//	Car_Drive_route();
 	Car_turn_corner(Yaw_struct.Yaw, Car_data.Car_Pos);
 	Sport_Car();
 }

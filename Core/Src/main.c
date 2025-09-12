@@ -34,8 +34,6 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-char rxbuffer[124] = {0};
-char rxbuffer2[22] = {0};
 
 
 /* USER CODE END PTD */
@@ -107,12 +105,15 @@ int main(void)
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 	
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart2 , (uint8_t *)rxbuffer , sizeof(rxbuffer));
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart3 , (uint8_t *)rxbuffer2 , sizeof(rxbuffer2));
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart2 , (uint8_t *)Rxbuffer2 , sizeof(Rxbuffer2));
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart3 , (uint8_t *)Rxbuffer3 , sizeof(Rxbuffer3));
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart4 , (uint8_t *)Rxbuffer4 , sizeof(Rxbuffer4));
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart6 , (uint8_t *)Rxbuffer6 , sizeof(Rxbuffer6));
+  
 	Yaw_pid_Init();
 	Motor_Init();
 	ResetHWT101();
-//	HAL_Delay(3000);
+	HAL_Delay(2000);
 	HAL_TIM_Base_Start_IT(&GAP_TIM);														//ÆôÓÃ¼ÆÊ±Æ÷
 	
   /* USER CODE END 2 */
