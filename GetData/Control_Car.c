@@ -84,7 +84,7 @@ void Sport_Car()
 //坦克主控函数
 void Car_Control()
 {
-//	Car_Drive_route();
+	Car_Drive_route();
 	Car_turn_corner(Yaw_struct.Yaw, Car_data.Car_Pos);
 	Sport_Car();
 }
@@ -186,7 +186,16 @@ void Car_Drive_route()
 	}
 	else if(flag == 11)
 	{
-		static uint16_t i = 0;
+		//排爆区等待
+		if(Boss_State == 0x01 && Boss_State_Last == 0x00)           //启动小车
+		{
+			Pos_temp = Car_data.Car_Pos;
+			Car_data.Line_speed = Middle_speed;                 
+			flag = 12;
+		}
+		
+		
+/* 		static uint16_t i = 0;
 		i++;
 		if(i > 1000)
 		{
@@ -194,6 +203,7 @@ void Car_Drive_route()
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 12;
 		}
+ */	
 	}
 	else if(flag == 12)
 	{
@@ -205,7 +215,14 @@ void Car_Drive_route()
 	}
 	else if(flag == 13)
 	{
-		static uint16_t i = 0;
+		//打靶区等待
+		if(Boss_State == 0x01 && Boss_State_Last == 0x00)           //停止小车
+		{
+			Pos_temp = Car_data.Car_Pos;
+			Car_data.Line_speed = Middle_speed;                 
+			flag = 14;
+		}
+/* 		static uint16_t i = 0;
 		i++;
 		if(i > 500)
 		{
@@ -213,7 +230,7 @@ void Car_Drive_route()
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 14;
 		}
-	}
+ */	}
 	else if(flag == 14)
 	{
 		if(Car_data.Car_Pos >= Pos_temp + 37.5f)
@@ -240,7 +257,14 @@ void Car_Drive_route()
 	}
 	else if(flag == 17)
 	{
-		static uint16_t i = 0;
+		//人质区等待
+		if(Boss_State == 0x01 && Boss_State_Last == 0x00)           //启动小车
+		{
+			Pos_temp = Car_data.Car_Pos;
+			Car_data.Line_speed = Middle_speed;                 
+			flag = 18;
+		}
+/* 		static uint16_t i = 0;
 		i++;
 		if(i > 500)
 		{
@@ -249,7 +273,7 @@ void Car_Drive_route()
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 18;
 		}
-	}
+ */	}
 	else if(flag == 18)
 	{
 		if(Car_data.Car_Pos >= Pos_temp + 170.0f)
@@ -305,7 +329,7 @@ void Car_turn_corner(float Yaw_Current, float Pos_Current)
 void ResetHWT101(void)
 {
 	uint8_t temp[]={0xff,0xAA,0X76,0x00,0x00};
-	HAL_UART_Transmit(&huart3, temp, 5,0xffff);
+	HAL_UART_Transmit_DMA(&huart3, temp, 5);
 }
 
 

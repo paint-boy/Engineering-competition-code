@@ -67,6 +67,8 @@ void Emm_Pos_Control(uint32_t clk);
 
 
 extern Yaw_TypeDef Yaw_struct;
+extern uint8_t Boss_State;
+extern uint8_t Boss_State_Last;   
 
 
 

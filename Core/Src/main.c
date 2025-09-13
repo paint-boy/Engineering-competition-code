@@ -105,16 +105,13 @@ int main(void)
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 	
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart2 , (uint8_t *)Rxbuffer2 , sizeof(Rxbuffer2));
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart3 , (uint8_t *)Rxbuffer3 , sizeof(Rxbuffer3));
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart4 , (uint8_t *)Rxbuffer4 , sizeof(Rxbuffer4));
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart6 , (uint8_t *)Rxbuffer6 , sizeof(Rxbuffer6));
-  
+
+  UART_Task_Init();
 	Yaw_pid_Init();
 	Motor_Init();
 	ResetHWT101();
 	HAL_Delay(2000);
-	HAL_TIM_Base_Start_IT(&GAP_TIM);														//ÆôÓÃ¼ÆÊ±Æ÷
+	HAL_TIM_Base_Start_IT(&GAP_TIM);					
 	
   /* USER CODE END 2 */
 

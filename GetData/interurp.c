@@ -24,6 +24,7 @@ uint8_t Rxbuffer4_2[RXbuffer4_size] = {0};
 
 
 uint8_t Boss_State = 0;   //0x01:启动  0x00:停止  上主控发送来的数据
+uint8_t Boss_State_Last = 0;   
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -31,57 +32,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance == TIM4)      //10ms定时器
 	{
 		Car_Control();
-		
 	}
-
 }
 
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+void UART_Task_Init(void)
+{ 
+	  HAL_UART_Receive_DMA(&huart2, Rxbuffer2, RXbuffer2_size);
+	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE); 
+	  HAL_UART_Receive_DMA(&huart3, Rxbuffer3, RXbuffer3_size);
+	__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE); 
+	  HAL_UART_Receive_DMA(&huart6, Rxbuffer6, RXbuffer6_size);
+	__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE); 
+		HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
+	__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
+}
+
+void Uart2_task()
 {
-	if(huart->Instance == USART2)      //调试
-	{
-   		HAL_UARTEx_ReceiveToIdle_DMA(&huart2 , (uint8_t *)Rxbuffer2 , sizeof(Rxbuffer2));
-	}
-	else if(huart->Instance == USART6)   //张大头步进电机
-	{
-	
-		HAL_UARTEx_ReceiveToIdle_DMA(&huart6 , (uint8_t *)Rxbuffer6 , sizeof(Rxbuffer6));
-	}
-	else if(huart->Instance == UART4)   //与上面主控通信
-	{
-		for (uint8_t i = 0; i < 3; i++)
-		{
-			if(Rxbuffer4[i] == 0x55 && Rxbuffer4[(i+2)%6] == 0x45)
-			{
-				if(Rxbuffer4[(i+1)%6] == 0x01)
-				{
-					Boss_State = 0x01;   //启动
-				}
-				else if(Rxbuffer4[(i+1)%6] == 0x00)
-				{
-					Boss_State = 0x00;   //停止
-				}
-				break;
-			}
-		}
-		HAL_UARTEx_ReceiveToIdle_DMA(&huart4 , (uint8_t *)Rxbuffer4 , sizeof(Rxbuffer4));
-	}
-	else if(huart->Instance == USART3) //hwt101
-	{
+		//调试数据处理
+}
+
+
+
+void Uart3_task()
+{
 		/*检索并解包hwt101*/
-		for(uint8_t i = 0; i<22; i++)
-		{
-			if(Rxbuffer3[i] == 0x55 && Rxbuffer3[(i+1)%22] == 0x52)
-			{
-				RWzL = Rxbuffer3[(i + 4)%22];
-				RWzH = Rxbuffer3[(i + 5)%22];
-				WzL = Rxbuffer3[(i + 6)%22];
-				WzH = Rxbuffer3[(i + 7)%22];
-				
-				Yaw_struct.Yaw_Gz = (float)((WzH<<8)|WzL)/32768.0f*2000.0f;
-				break;
-			}
-		}
 		for(uint8_t i = 0; i<22; i++)
 		{
 			if(Rxbuffer3[i] == 0x55 && Rxbuffer3[(i+1)%22] == 0x53)
@@ -98,11 +73,29 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 				break;
 			}
 		}
-    HAL_UARTEx_ReceiveToIdle_DMA(&huart3 , (uint8_t *)Rxbuffer3 , sizeof(Rxbuffer3));
-	}
 }
-
-
-
+void Uart4_task()
+{
+		for (uint8_t i = 0; i < 3; i++)
+		{
+			if(Rxbuffer4[i] == 0x55 && Rxbuffer4[(i+2)%6] == 0x45)
+			{
+				if(Rxbuffer4[(i+1)%6] == 0x01)
+				{
+					Boss_State = 0x01;   //启动
+				}
+				else if(Rxbuffer4[(i+1)%6] == 0x00)
+				{
+					Boss_State = 0x00;   //停止
+				}
+				break;
+			}
+		}
+		Boss_State_Last = Boss_State;
+}
+void Uart6_task()
+{
+		//步进电机数据处理
+}
 
 

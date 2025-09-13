@@ -25,11 +25,18 @@
 
 #include "usart.h"
 #include "stdio.h"
+#include "interurp.h"
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
+
+__IO uint16_t UART2_RX_STA = 0;
+__IO uint16_t UART3_RX_STA = 0;
+__IO uint16_t UART4_RX_STA = 0;
+__IO uint16_t UART6_RX_STA = 0;
+
 
 /* USER CODE END TD */
 
@@ -63,6 +70,7 @@ extern TIM_HandleTypeDef htim4;
 extern DMA_HandleTypeDef hdma_uart4_rx;
 extern DMA_HandleTypeDef hdma_uart4_tx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart3_tx;
 extern DMA_HandleTypeDef hdma_usart6_tx;
 extern DMA_HandleTypeDef hdma_usart6_rx;
 extern UART_HandleTypeDef huart4;
@@ -240,6 +248,20 @@ void DMA1_Stream2_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 stream3 global interrupt.
+  */
+void DMA1_Stream3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream3_IRQn 0 */
+
+  /* USER CODE END DMA1_Stream3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart3_tx);
+  /* USER CODE BEGIN DMA1_Stream3_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream3_IRQn 1 */
+}
+
+/**
   * @brief This function handles DMA1 stream4 global interrupt.
   */
 void DMA1_Stream4_IRQHandler(void)
@@ -273,7 +295,16 @@ void TIM4_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-
+  if(__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE) != RESET)
+  {
+      __HAL_UART_CLEAR_IDLEFLAG(&huart2); 
+      HAL_UART_DMAStop(&huart2);   
+      UART2_RX_STA = RXbuffer2_size - __HAL_DMA_GET_COUNTER(huart2.hdmarx);  
+      Rxbuffer2[UART2_RX_STA] = 0;
+      Uart2_task();
+      UART2_RX_STA |= 0X8000; 
+      HAL_UART_Receive_DMA(&huart2, Rxbuffer2, RXbuffer2_size);
+  }
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
@@ -287,7 +318,17 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART3_IRQn 0 */
-
+	
+	if(__HAL_UART_GET_FLAG(&huart3, UART_FLAG_IDLE) != RESET)
+	{
+	    __HAL_UART_CLEAR_IDLEFLAG(&huart3); 
+	    HAL_UART_DMAStop(&huart3);   
+	    UART3_RX_STA = RXbuffer3_size - __HAL_DMA_GET_COUNTER(huart3.hdmarx);  
+	    Rxbuffer3[UART3_RX_STA] = 0; 
+			Uart3_task();
+			UART3_RX_STA |= 0X8000; 
+	    HAL_UART_Receive_DMA(&huart3, Rxbuffer3, RXbuffer3_size);
+	}
   /* USER CODE END USART3_IRQn 0 */
   HAL_UART_IRQHandler(&huart3);
   /* USER CODE BEGIN USART3_IRQn 1 */
@@ -301,7 +342,16 @@ void USART3_IRQHandler(void)
 void UART4_IRQHandler(void)
 {
   /* USER CODE BEGIN UART4_IRQn 0 */
-
+  if(__HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE) != RESET)
+  {
+      __HAL_UART_CLEAR_IDLEFLAG(&huart4); 
+      HAL_UART_DMAStop(&huart4);   
+      UART4_RX_STA = RXbuffer4_size - __HAL_DMA_GET_COUNTER(huart4.hdmarx);  
+      Rxbuffer4[UART4_RX_STA] = 0;
+      Uart4_task();
+      UART4_RX_STA |= 0X8000; 
+      HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
+  }
   /* USER CODE END UART4_IRQn 0 */
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
@@ -343,7 +393,16 @@ void DMA2_Stream6_IRQHandler(void)
 void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
-
+  if(__HAL_UART_GET_FLAG(&huart6, UART_FLAG_IDLE) != RESET)
+  {
+      __HAL_UART_CLEAR_IDLEFLAG(&huart6); 
+      HAL_UART_DMAStop(&huart6);   
+      UART6_RX_STA = RXbuffer6_size - __HAL_DMA_GET_COUNTER(huart6.hdmarx);  
+      Rxbuffer6[UART6_RX_STA] = 0;
+      Uart6_task();
+      UART6_RX_STA |= 0X8000; 
+      HAL_UART_Receive_DMA(&huart6, Rxbuffer6, RXbuffer6_size);
+  }
   /* USER CODE END USART6_IRQn 0 */
   HAL_UART_IRQHandler(&huart6);
   /* USER CODE BEGIN USART6_IRQn 1 */

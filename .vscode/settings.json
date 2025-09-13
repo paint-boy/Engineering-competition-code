@@ -2,6 +2,8 @@
     "files.associations": {
         "emm_v5.h": "c",
         "interurp.h": "c",
-        "control_car.h": "c"
+        "control_car.h": "c",
+        "main.h": "c",
+        "usart.h": "c"
     }
 }
