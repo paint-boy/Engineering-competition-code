@@ -11,12 +11,14 @@
 #include "stdio.h"
 #include "Encode.h"
 #include "Emm_V5.h"
+#include "interurp.h"
+
 
 #define Diameter  15.0f
 #define M_PI_F 3.141592653589793f
 
 //定义小车速度
-#define	Low_speed     1.0f
+#define	Low_speed     1.5f
 #define	Middle_speed  2.0f
 #define High_speed    3.0f
 #define Error         2.3f
@@ -40,21 +42,10 @@ typedef struct
 	float Motor_R_Pos;
 	float Motor_L_Out;
 	float Motor_R_Out;
+	float Motor_Angle;
 	
 }Parameter_TypeDef_Car;
 
-//张大头电机步距角1.8度除于256得到0.00703125（单位是角度/脉冲）
-enum Emm_Angle
-{
-	Angle_45       = 6400,
-	Angle_90       = 12800,
-	Angle_135      = 19200,
-	Angle_180      = 25600,
-	Angle_225      = 32000,
-	Angle_270      = 38400,
-	Angle_315      = 44800,
-	Angle_360      = 51200,
-};
 
 void Yaw_PID_Control(void);
 void Yaw_pid_Init(void);
@@ -63,12 +54,13 @@ void Car_Control(void);
 void ResetHWT101(void);
 void Car_turn_corner(float Yaw_Current, float Pos_Current);
 void Car_Drive_route(void);
-void Emm_Pos_Control(uint32_t clk);
+void Emm_Pos_Control(float Angle);
 
 
 extern Yaw_TypeDef Yaw_struct;
 extern uint8_t Boss_State;
 extern uint8_t Boss_State_Last;   
+
 
 
 

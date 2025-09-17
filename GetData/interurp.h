@@ -15,7 +15,7 @@
 #define RXbuffer2_size     10
 #define RXbuffer3_size     44
 #define RXbuffer6_size     30
-#define RXbuffer4_size     9
+#define RXbuffer4_size     16
 
 extern uint8_t Rxbuffer1[RXbuffer1_size];
 extern uint8_t Rxbuffer2[RXbuffer2_size];
@@ -30,11 +30,23 @@ extern uint8_t Rxbuffer6_2[RXbuffer6_size];
 extern uint8_t Rxbuffer4_2[RXbuffer4_size];
 
 
+typedef struct 
+{
+	uint8_t Boss_State;      //0x01:启动  0x00:停止  控制小车到达任务区后做完任务后是否使能速度
+	uint8_t Boss_State_Last;
+	uint8_t WC_PIT_R;        //接收到的坑位
+	
+}U4_R_data;
+
+
+
 void UART_Task_Init(void);
 void Uart3_task(void);
 void Uart4_task(void);
 void Uart6_task(void);
 void Uart2_task(void);
+void Control_Emm_Angle(void);
+void Usart4_send(void);       						 //某一刻只执行一次
 
 
 

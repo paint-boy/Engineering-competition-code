@@ -67,6 +67,7 @@ __IO uint16_t UART6_RX_STA = 0;
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
 extern DMA_HandleTypeDef hdma_uart4_rx;
 extern DMA_HandleTypeDef hdma_uart4_tx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -303,6 +304,7 @@ void USART2_IRQHandler(void)
       Rxbuffer2[UART2_RX_STA] = 0;
       Uart2_task();
       UART2_RX_STA |= 0X8000; 
+			memset(Rxbuffer2,0,RXbuffer2_size);
       HAL_UART_Receive_DMA(&huart2, Rxbuffer2, RXbuffer2_size);
   }
   /* USER CODE END USART2_IRQn 0 */
@@ -327,6 +329,7 @@ void USART3_IRQHandler(void)
 	    Rxbuffer3[UART3_RX_STA] = 0; 
 			Uart3_task();
 			UART3_RX_STA |= 0X8000; 
+			memset(Rxbuffer3,0,RXbuffer3_size);
 	    HAL_UART_Receive_DMA(&huart3, Rxbuffer3, RXbuffer3_size);
 	}
   /* USER CODE END USART3_IRQn 0 */
@@ -334,6 +337,20 @@ void USART3_IRQHandler(void)
   /* USER CODE BEGIN USART3_IRQn 1 */
 
   /* USER CODE END USART3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM5 global interrupt.
+  */
+void TIM5_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM5_IRQn 0 */
+
+  /* USER CODE END TIM5_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim5);
+  /* USER CODE BEGIN TIM5_IRQn 1 */
+
+  /* USER CODE END TIM5_IRQn 1 */
 }
 
 /**
@@ -350,6 +367,7 @@ void UART4_IRQHandler(void)
       Rxbuffer4[UART4_RX_STA] = 0;
       Uart4_task();
       UART4_RX_STA |= 0X8000; 
+			memset(Rxbuffer4,0,RXbuffer4_size);
       HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
   }
   /* USER CODE END UART4_IRQn 0 */
@@ -401,6 +419,7 @@ void USART6_IRQHandler(void)
       Rxbuffer6[UART6_RX_STA] = 0;
       Uart6_task();
       UART6_RX_STA |= 0X8000; 
+			memset(Rxbuffer6,0,RXbuffer6_size);
       HAL_UART_Receive_DMA(&huart6, Rxbuffer6, RXbuffer6_size);
   }
   /* USER CODE END USART6_IRQn 0 */

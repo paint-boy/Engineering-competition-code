@@ -1,8 +1,10 @@
 #include "Control_Car.h"
-//hello
+
+extern U4_R_data U4_R_Data;
+Parameter_TypeDef_Car Car_data;
 
 Yaw_TypeDef Yaw_struct;
-Parameter_TypeDef_Car Car_data;
+
 void Yaw_pid_Init()
 {
 	Yaw_struct.Yaw_pid.Kp                  = 0.15f; 
@@ -88,7 +90,7 @@ void Car_Control()
 	Car_turn_corner(Yaw_struct.Yaw, Car_data.Car_Pos);
 	Sport_Car();
 }
-
+uint8_t CW_OR_CCW = 1;
 //坦克行驶路径
 void Car_Drive_route()
 {
@@ -97,7 +99,7 @@ void Car_Drive_route()
 	if(flag == 0)
 	{
 		Car_data.Line_speed = Middle_speed;
-		if(Car_data.Car_Pos > 38.0f)
+		if(Car_data.Car_Pos > 43.0f)
 		{
 			Car_data.flag_L_R = 1;        //第一处转弯
 			flag = 1;
@@ -113,7 +115,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 2)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 7.0f)
+		if(Car_data.Car_Pos >= Pos_temp + 12.0f)
 		{
 			Car_data.flag_L_R = 2;        //第二处转弯
 			flag = 3;
@@ -129,7 +131,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 4)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 45.0f)
+		if(Car_data.Car_Pos >= Pos_temp + 46.0f)
 		{
 			Car_data.flag_L_R = 1;        //第三处转弯
 			flag = 5;
@@ -145,7 +147,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 6)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 26.7f)
+		if(Car_data.Car_Pos >= Pos_temp + 31.0f)
 		{
 			Car_data.flag_L_R = 2;        //第四处转弯
 			flag = 7;
@@ -161,7 +163,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 8)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 42.0f)
+		if(Car_data.Car_Pos >= Pos_temp + 47.5f)
 		{
 			Car_data.flag_L_R = 2;        //第五处转弯
 			flag = 9;
@@ -169,41 +171,63 @@ void Car_Drive_route()
 	}
 	else if(flag == 9)
 	{
-		if(Car_data.flag_L_R == 0)
+		if(Car_data.flag_L_R == 0)        
 		{
+			Car_data.Line_speed = Low_speed;
+			Usart4_send();     					 	//转弯成功
+			Car_data.Motor_Angle = 90.0f;	//转盘旋转90度
 			Pos_temp = Car_data.Car_Pos;
 			flag = 10;
 		}
 	}
 	else if(flag == 10)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 30.0f)
+		if(Car_data.Car_Pos >= Pos_temp + 44.5f)
 		{
-			Yaw_struct.Tar_Yaw = -90.0f;
+			Yaw_struct.Tar_Yaw = -90.3f;
 			Car_data.Line_speed = 0;                 //排爆区
-			flag = 11;
+			Usart4_send();     					 					  	//停车成功
+			if(U4_R_Data.WC_PIT_R != 0)
+			{
+				Control_Emm_Angle();
+				flag = 100;
+			}
+		}
+	}
+	else if(flag == 100)
+	{
+		if(U4_R_Data.Boss_State == 0x01)          
+		{
+			if(U4_R_Data.WC_PIT_R == 3)
+			{
+				CW_OR_CCW = 0;
+				Car_data.Motor_Angle = 90;
+			}
+			else
+			{
+				CW_OR_CCW = 1;
+				Car_data.Motor_Angle = 270;
+			}
+			static uint16_t i = 0;
+			i++;
+			if(i > 300)
+			{
+				U4_R_Data.Boss_State = 0;
+				Usart4_send();      //270度转向成功
+				flag = 11;
+			}
 		}
 	}
 	else if(flag == 11)
 	{
 		//排爆区等待
-		if(Boss_State == 0x01 && Boss_State_Last == 0x00)           //启动小车
+		if(U4_R_Data.Boss_State == 0x01)           //启动小车
 		{
+			U4_R_Data.Boss_State = 0;
 			Pos_temp = Car_data.Car_Pos;
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 12;
 		}
-		
-		
-/* 		static uint16_t i = 0;
-		i++;
-		if(i > 1000)
-		{
-			Pos_temp = Car_data.Car_Pos;
-			Car_data.Line_speed = Middle_speed;                 
-			flag = 12;
-		}
- */	
 	}
 	else if(flag == 12)
 	{
@@ -216,21 +240,13 @@ void Car_Drive_route()
 	else if(flag == 13)
 	{
 		//打靶区等待
-		if(Boss_State == 0x01 && Boss_State_Last == 0x00)           //停止小车
+		if(U4_R_Data.Boss_State  == 0x01 && U4_R_Data.Boss_State_Last == 0x00)           //停止小车
 		{
 			Pos_temp = Car_data.Car_Pos;
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 14;
 		}
-/* 		static uint16_t i = 0;
-		i++;
-		if(i > 500)
-		{
-			Pos_temp = Car_data.Car_Pos;
-			Car_data.Line_speed = Middle_speed;                 
-			flag = 14;
-		}
- */	}
+	}
 	else if(flag == 14)
 	{
 		if(Car_data.Car_Pos >= Pos_temp + 37.5f)
@@ -258,7 +274,7 @@ void Car_Drive_route()
 	else if(flag == 17)
 	{
 		//人质区等待
-		if(Boss_State == 0x01 && Boss_State_Last == 0x00)           //启动小车
+		if(U4_R_Data.Boss_State == 0x01 && U4_R_Data.Boss_State_Last == 0x00)           //启动小车
 		{
 			Pos_temp = Car_data.Car_Pos;
 			Car_data.Line_speed = Middle_speed;                 
@@ -320,7 +336,6 @@ void Car_turn_corner(float Yaw_Current, float Pos_Current)
         flag = 0;
         Car_data.flag_L_R = 0;
     }
-
     last_flag_L_R = Car_data.flag_L_R; // 记录本次
 }
 
@@ -332,10 +347,11 @@ void ResetHWT101(void)
 	HAL_UART_Transmit_DMA(&huart3, temp, 5);
 }
 
-
-void Emm_Pos_Control(uint32_t clk)
+void Emm_Pos_Control(float Angle)
 {
-	Emm_V5_Pos_Control(1,0,10,0,clk,true,false);
+	static uint32_t Angle_Tick = 0;
+	Angle_Tick = (uint32_t)(1208.888 * Angle);
+	Emm_V5_Pos_Control(1,CW_OR_CCW,180,0,Angle_Tick,true,false);
 }
 
 
