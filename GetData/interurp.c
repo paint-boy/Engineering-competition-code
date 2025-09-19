@@ -24,9 +24,6 @@ uint8_t Rxbuffer4_2[RXbuffer4_size] = {0};
 
 U4_R_data U4_R_Data;
 extern Parameter_TypeDef_Car Car_data;
-
-extern Parameter_TypeDef_Car Car_data;
-
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM4)      //10ms定时器
@@ -97,10 +94,6 @@ void UART_Task_Init(void)
 		HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
 	__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
 }
-void Uart6_task()
-{
-		//步进电机数据处理
-}
 void Uart3_task()
 {
 		/*检索并解包hwt101*/
@@ -124,5 +117,9 @@ void Uart3_task()
 void Uart2_task()
 {
 		//调试数据处理
+}
+void Uart6_task()
+{
+		//步进电机数据处理
 }
 

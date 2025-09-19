@@ -14,77 +14,6 @@ void Yaw_pid_Init()
 	Yaw_struct.Yaw_pid.Out_Max             = 0.8f;
 	Yaw_struct.Yaw_pid.Out                 = 0.0f;
 }
-
-//航向环闭环
-void Yaw_PID_Control()
-{
-	Yaw_struct.Yaw_pid.Current = Yaw_struct.Yaw;
-	Position_PID(&Yaw_struct.Yaw_pid, Yaw_struct.Tar_Yaw);
-//	Yaw_struct.Yaw_pid.Out
-}
-
-
-
-//小车运动
-void Sport_Car()
-{
-	//直线速度
-	float Speed = (motors[Motor_0].Parameter.Speed + motors[Motor_1].Parameter.Speed)/2.0f;
-	motors[Motor_0].Parameter.Tar_Speed = speed_control(motors[Motor_0].Parameter.Acc, Speed, -Car_data.Line_speed, motors[Motor_0].Parameter.dt);
-	motors[Motor_1].Parameter.Tar_Speed = speed_control(motors[Motor_1].Parameter.Acc, Speed, -Car_data.Line_speed, motors[Motor_1].Parameter.dt);
-	
-	Gat_Motor_data(Motor_0);
-	Gat_Motor_data(Motor_1);
-	
-	//获取电机路程
-	Car_data.Motor_L_Pos = -motors[Motor_0].Parameter.Pos;
-	Car_data.Motor_R_Pos = -motors[Motor_1].Parameter.Pos;
-	Car_data.Car_Pos = (Car_data.Motor_L_Pos + Car_data.Motor_R_Pos)/2.0f *15.0f;
-	
-	//加入航向环控制
-	Yaw_PID_Control();
-	//闭环控制
-	motors[Motor_0].speed_pid.Current = motors[Motor_0].Parameter.Speed;
-	motors[Motor_1].speed_pid.Current = motors[Motor_1].Parameter.Speed;
-	
-	Position_PID(&motors[Motor_1].speed_pid , motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out);
-	Position_PID(&motors[Motor_0].speed_pid , motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out);
-	
-	Car_data.Motor_L_Out = motors[Motor_1].speed_pid.Out;
-	Car_data.Motor_R_Out = motors[Motor_0].speed_pid.Out;
-	
-	//赋予电机
-	uint32_t CCR1 = (uint32_t)fabsf(Car_data.Motor_L_Out);
-	uint32_t CCR2 = (uint32_t)fabsf(Car_data.Motor_R_Out);
-	
-	if (CCR1 > PWM_ARR) CCR1 = PWM_ARR;
-	if (CCR2 > PWM_ARR) CCR2 = PWM_ARR;
-	
-	if(Car_data.Motor_R_Out > 0)
-	{
-		HAL_GPIO_WritePin(motors[Motor_0].Motor_Dir_GPIO_Port , motors[Motor_0].Motor_Dir_Pin , 0);
-	}
-	else
-	{
-		HAL_GPIO_WritePin(motors[Motor_0].Motor_Dir_GPIO_Port , motors[Motor_0].Motor_Dir_Pin , 1);
-	}
-	
-	if(Car_data.Motor_L_Out > 0)
-	{
-		HAL_GPIO_WritePin(motors[Motor_1].Motor_Dir_GPIO_Port , motors[Motor_1].Motor_Dir_Pin , 0);
-	}
-	else
-	{
-		HAL_GPIO_WritePin(motors[Motor_1].Motor_Dir_GPIO_Port , motors[Motor_1].Motor_Dir_Pin , 1);
-	}
-	
-	*motors[Motor_1].ccr = CCR1;
-	*motors[Motor_0].ccr = CCR2;
-	
-//	printf("%d,%d\n",motors[Motor_1].tim -> CNT,motors[Motor_1].cnt);
-	
-	
-}
 //坦克主控函数
 void Car_Control()
 {
@@ -149,7 +78,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 6)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 31.0f)
+		if(Car_data.Car_Pos >= Pos_temp + 35.0f)
 		{
 			Car_data.flag_L_R = 2;        //第四处转弯
 			flag = 7;
@@ -165,7 +94,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 8)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 47.5f)
+		if(Car_data.Car_Pos >= Pos_temp + 48.5f)
 		{
 			Car_data.flag_L_R = 2;        //第五处转弯
 			flag = 9;
@@ -184,7 +113,7 @@ void Car_Drive_route()
 	}
 	else if(flag == 10)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 44.5f)
+		if(Car_data.Car_Pos >= Pos_temp + 45.5f)
 		{
 			Yaw_struct.Tar_Yaw = -90.3f;
 			Car_data.Line_speed = 0;                 //排爆区
@@ -222,9 +151,10 @@ void Car_Drive_route()
 	}
 	else if(flag == 11)
 	{
-		//排爆区等待
 		if(U4_R_Data.Boss_State == 0x01)           //启动小车
 		{
+			CW_OR_CCW = 1;
+			Car_data.Motor_Angle = 90;
 			U4_R_Data.Boss_State = 0;
 			Pos_temp = Car_data.Car_Pos;
 			Car_data.Line_speed = Middle_speed;                 
@@ -239,10 +169,13 @@ void Car_Drive_route()
 			flag = 13;
 		}
 	}
+	
+/////////////////
+	
 	else if(flag == 13)
 	{
 		//打靶区等待
-		if(U4_R_Data.Boss_State  == 0x01 && U4_R_Data.Boss_State_Last == 0x00)           //停止小车
+		if(U4_R_Data.Boss_State  == 0x01)           
 		{
 			Pos_temp = Car_data.Car_Pos;
 			Car_data.Line_speed = Middle_speed;                 
@@ -276,13 +209,13 @@ void Car_Drive_route()
 	else if(flag == 17)
 	{
 		//人质区等待
-		if(U4_R_Data.Boss_State == 0x01 && U4_R_Data.Boss_State_Last == 0x00)           //启动小车
+		if(U4_R_Data.Boss_State == 0x01)           //启动小车
 		{
 			Pos_temp = Car_data.Car_Pos;
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 18;
 		}
-/* 		static uint16_t i = 0;
+		static uint16_t i = 0;
 		i++;
 		if(i > 500)
 		{
@@ -291,7 +224,7 @@ void Car_Drive_route()
 			Car_data.Line_speed = Middle_speed;                 
 			flag = 18;
 		}
- */	}
+	}
 	else if(flag == 18)
 	{
 		if(Car_data.Car_Pos >= Pos_temp + 170.0f)
@@ -340,15 +273,12 @@ void Car_turn_corner(float Yaw_Current, float Pos_Current)
     }
     last_flag_L_R = Car_data.flag_L_R; // 记录本次
 }
-
-
 //HWT101角度置零
 void ResetHWT101(void)
 {
 	uint8_t temp[]={0xff,0xAA,0X76,0x00,0x00};
 	HAL_UART_Transmit_DMA(&huart3, temp, 5);
 }
-
 void Emm_Pos_Control(float Angle)
 {
 	static uint32_t Angle_Tick = 0;
@@ -356,6 +286,71 @@ void Emm_Pos_Control(float Angle)
 	Emm_V5_Pos_Control(1,CW_OR_CCW,180,0,Angle_Tick,true,false);
 }
 
+//小车运动
+void Sport_Car()
+{
+	//直线速度
+	float Speed = (motors[Motor_0].Parameter.Speed + motors[Motor_1].Parameter.Speed)/2.0f;
+	motors[Motor_0].Parameter.Tar_Speed = speed_control(motors[Motor_0].Parameter.Acc, Speed, -Car_data.Line_speed, motors[Motor_0].Parameter.dt);
+	motors[Motor_1].Parameter.Tar_Speed = speed_control(motors[Motor_1].Parameter.Acc, Speed, -Car_data.Line_speed, motors[Motor_1].Parameter.dt);
+	
+	Gat_Motor_data(Motor_0);
+	Gat_Motor_data(Motor_1);
+	
+	//获取电机路程
+	Car_data.Motor_L_Pos = -motors[Motor_0].Parameter.Pos;
+	Car_data.Motor_R_Pos = -motors[Motor_1].Parameter.Pos;
+	Car_data.Car_Pos = (Car_data.Motor_L_Pos + Car_data.Motor_R_Pos)/2.0f *15.0f;
+	
+	//加入航向环控制
+	Yaw_PID_Control();
+	//闭环控制
+	motors[Motor_0].speed_pid.Current = motors[Motor_0].Parameter.Speed;
+	motors[Motor_1].speed_pid.Current = motors[Motor_1].Parameter.Speed;
+	
+	Position_PID(&motors[Motor_1].speed_pid , motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out);
+	Position_PID(&motors[Motor_0].speed_pid , motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out);
+	
+	Car_data.Motor_L_Out = motors[Motor_1].speed_pid.Out;
+	Car_data.Motor_R_Out = motors[Motor_0].speed_pid.Out;
+	
+	//赋予电机
+	uint32_t CCR1 = (uint32_t)fabsf(Car_data.Motor_L_Out);
+	uint32_t CCR2 = (uint32_t)fabsf(Car_data.Motor_R_Out);
+	
+	if (CCR1 > PWM_ARR) CCR1 = PWM_ARR;
+	if (CCR2 > PWM_ARR) CCR2 = PWM_ARR;
+	
+	if(Car_data.Motor_R_Out > 0)
+	{
+		HAL_GPIO_WritePin(motors[Motor_0].Motor_Dir_GPIO_Port , motors[Motor_0].Motor_Dir_Pin , 0);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(motors[Motor_0].Motor_Dir_GPIO_Port , motors[Motor_0].Motor_Dir_Pin , 1);
+	}
+	
+	if(Car_data.Motor_L_Out > 0)
+	{
+		HAL_GPIO_WritePin(motors[Motor_1].Motor_Dir_GPIO_Port , motors[Motor_1].Motor_Dir_Pin , 0);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(motors[Motor_1].Motor_Dir_GPIO_Port , motors[Motor_1].Motor_Dir_Pin , 1);
+	}
+	
+	*motors[Motor_1].ccr = CCR1;
+	*motors[Motor_0].ccr = CCR2;
+	
+//	printf("%d,%d\n",motors[Motor_1].tim -> CNT,motors[Motor_1].cnt);
+}
+//航向环闭环
+void Yaw_PID_Control()
+{
+	Yaw_struct.Yaw_pid.Current = Yaw_struct.Yaw;
+	Position_PID(&Yaw_struct.Yaw_pid, Yaw_struct.Tar_Yaw);
+//	Yaw_struct.Yaw_pid.Out
+}
 
 
 
