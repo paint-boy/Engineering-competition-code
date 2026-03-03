@@ -140,7 +140,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"Any" -UAny -O206 -S8 -C0 -P00000000 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F405RGTx$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
+          <Name>-X"Any" -UAny -O206 -S8 -C0 -P00000000 -N00("") -D00(00000000) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F405RGTx$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -158,84 +158,56 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motors,0x0A</ItemText>
+          <ItemText>Car_Err_flag</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>CCR</ItemText>
+          <ItemText>Car_data.Motor_Angle</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Crr</ItemText>
+          <ItemText>Yaw_struct.Yaw</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>rxbuffer2</ItemText>
+          <ItemText>U4_R_Data.Boss_State</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Yaw_struct</ItemText>
+          <ItemText>Car_Err_flag</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Car_data</ItemText>
+          <ItemText>U4_R_Data.WC_PIT_R</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag</ItemText>
+          <ItemText>test_flag</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Current_Temp</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Yaw_Temp</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Car_data.Car_Pos</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>temp</ItemText>
-        </Ww>
-        <Ww>
-          <count>11</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Rxbuffer3</ItemText>
-        </Ww>
-        <Ww>
-          <count>12</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Rxbuffer6</ItemText>
-        </Ww>
-        <Ww>
-          <count>13</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Rxbuffer4</ItemText>
-        </Ww>
-        <Ww>
-          <count>14</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Angle_Tick,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>15</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Angle</ItemText>
+          <ItemText>U4_R_Data.X_data,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
+      <WatchWindow2>
+        <Ww>
+          <count>0</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Pos_temp2</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Car_data.Car_Pos</ItemText>
+        </Ww>
+      </WatchWindow2>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>

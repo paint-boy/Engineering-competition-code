@@ -1,0 +1,30 @@
+[project_search_path]: ./
+[map_search_path]: ./
+[project_file_path]: .//panzer.uvprojx
+[ map_file_path]: .//panzer/panzer.map
+[parse_keil_map start]: 
+[Found keyword]: ----------Execution Region----------
+[name]:  ER_IROM1 
+[Exec base]: 0x8000000
+[Size]: 0x6d4c
+[Max]: 0x100000
+[Found keyword]: ----------Execution Region----------
+[name]:  RW_IRAM1 
+[Exec base]: 0x20000000
+[Size]: 0xc68
+[Max]: 0x1c000
+[Found keyword]: ----------Execution Region----------
+[name]:  RW_IRAM2 
+[Exec base]: 0x2001c000
+[Size]: 0
+[Max]: 0x4000
+[parse_keil_map over printf bar]: 
+  RW_IRAM1 :0x20000000
+  112.00 KB :|____________________|    2.77 % (    3.10 KB /   112.00 KB) [111512 B]
+  RW_IRAM2 :0x2001c000
+   16.00 KB :|____________________|    0.00 % (    0.00 KB /    16.00 KB) [16384 B]
+  ER_IROM1 :0x8000000
+    1.00 MB :|____________________|    2.67 % (    0.03 MB /     1.00 MB) [1020596 B]
+[export csv]: ./panzer_sort_by_flash.csv
+[export csv]: ./panzer_sort_by_ram.csv
+[export xlsx]: panzer_analysis.xlsx

@@ -110,9 +110,12 @@ int main(void)
   UART_Task_Init();
 	Yaw_pid_Init();
 	Motor_Init();
-	ResetHWT101();
+	
+//	Usart3_send_HWT101_Zero();
+	
+	ResetHWT101(); 
 	HAL_Delay(2000);
-	HAL_TIM_Base_Start_IT(&GAP_TIM);		
+	HAL_TIM_Base_Start_IT(&GAP_TIM);
 	HAL_TIM_Base_Start_IT(&htim5);
 	
   /* USER CODE END 2 */

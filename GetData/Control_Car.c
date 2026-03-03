@@ -1,10 +1,13 @@
 #include "Control_Car.h"
 
 extern U4_R_data U4_R_Data;
+extern uint8_t Car_Err_flag;
+
 Parameter_TypeDef_Car Car_data;
 
 Yaw_TypeDef Yaw_struct;
-
+uint8_t test_flag = 0;
+uint8_t lone_turn_flag = 0;
 void Yaw_pid_Init()
 {
 	Yaw_struct.Yaw_pid.Kp                  = 0.15f; 
@@ -22,85 +25,94 @@ void Car_Control()
 	Sport_Car();
 }
 uint8_t CW_OR_CCW = 1;
+float Pos_temp2 = 0.0f;
+
+volatile float Diameter = 15.0f;
+static uint8_t Task_flag = 0;
+volatile static uint8_t Timer_Delay = 0;
+
 //坦克行驶路径
 void Car_Drive_route()
 {
-	static uint8_t flag = 0;
 	static float Pos_temp = 0.0f;
-	if(flag == 0)
+	if(Task_flag == 0)
 	{
 		Car_data.Line_speed = Middle_speed;
-		if(Car_data.Car_Pos > 43.0f)
+		if(Car_data.Car_Pos > Turn_1)
 		{
 			Car_data.flag_L_R = 1;        //第一处转弯
-			flag = 1;
+			Task_flag = 1;
 		}
 	}
-	else if(flag == 1)
+	else if(Task_flag == 1)
 	{
 		if(Car_data.flag_L_R == 0)
 		{
 			Pos_temp = Car_data.Car_Pos;
-			flag = 2;
+			Task_flag = 2;
 		}
 	}
-	else if(flag == 2)
+	else if(Task_flag == 2)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 12.0f)
+		if(Car_data.Car_Pos > Pos_temp + Turn_2)
 		{
+			Diameter = 10.0f;
+			Car_data.Line_speed = Low_speed;
 			Car_data.flag_L_R = 2;        //第二处转弯
-			flag = 3;
+			Task_flag = 3;
 		}
 	}
-	else if(flag == 3)
+	else if(Task_flag == 3)
 	{
 		if(Car_data.flag_L_R == 0)
 		{
 			Pos_temp = Car_data.Car_Pos;
-			flag = 4;
+			Task_flag = 4;
 		}
 	}
-	else if(flag == 4)
+	else if(Task_flag == 4)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 46.0f)
+		if(Car_data.Car_Pos > Pos_temp + Turn_3)
 		{
 			Car_data.flag_L_R = 1;        //第三处转弯
-			flag = 5;
+			Task_flag = 5;
 		}
 	}
-	else if(flag == 5)
+	else if(Task_flag == 5)
 	{
 		if(Car_data.flag_L_R == 0)
 		{
+			Diameter = 15.0f;
+			Car_data.Line_speed = Middle_speed;
 			Pos_temp = Car_data.Car_Pos;
-			flag = 6;
+			Task_flag = 6;
 		}
 	}
-	else if(flag == 6)
+	else if(Task_flag == 6)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 35.0f)
+		if(Car_data.Car_Pos >= Pos_temp + Turn_4)
 		{
 			Car_data.flag_L_R = 2;        //第四处转弯
-			flag = 7;
+			Task_flag = 7;
 		}
 	}
-	else if(flag == 7)
+	else if(Task_flag == 7)
 	{
 		if(Car_data.flag_L_R == 0)
 		{
 			Pos_temp = Car_data.Car_Pos;
-			flag = 8;
+			Task_flag = 8;
 		}
 	}
-	else if(flag == 8)
+	else if(Task_flag == 8)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 48.5f)
+		if(Car_data.Car_Pos >= Pos_temp + Turn_5)
 		{
 			Car_data.flag_L_R = 2;        //第五处转弯
-			flag = 9;
+			Task_flag = 9;
 		}
 	}
-	else if(flag == 9)
+	else if(Task_flag == 9)
 	{
 		if(Car_data.flag_L_R == 0)        
 		{
@@ -108,134 +120,209 @@ void Car_Drive_route()
 			Usart4_send();     					 	//转弯成功
 			Car_data.Motor_Angle = 90.0f;	//转盘旋转90度
 			Pos_temp = Car_data.Car_Pos;
-			flag = 10;
+			Task_flag = 10;
 		}
 	}
-	else if(flag == 10)
+	else if(Task_flag == 10)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 45.5f)
+		if(Car_data.Car_Pos >= Pos_temp + Boom_Stop)
 		{
-			Yaw_struct.Tar_Yaw = -90.3f;
+			Yaw_struct.Tar_Yaw = -90.0f;
 			Car_data.Line_speed = 0;                 //排爆区
 			Usart4_send();     					 					  	//停车成功
-			if(U4_R_Data.WC_PIT_R != 0)
+			Task_flag = 11;
+		}
+	}
+	else if(Task_flag == 11)
+	{
+		if(U4_R_Data.WC_PIT_R != 0 && U4_R_Data.X_data >0)
+		{
+			Timer_Delay++;
+			if(Timer_Delay > 5)
 			{
+				Timer_Delay = 0;
+				test_flag = 5;
+				Pos_temp2 = Car_data.Car_Pos;
 				Control_Emm_Angle();
-				flag = 100;
+				Task_flag = 12;
 			}
 		}
 	}
-	else if(flag == 100)
+	else if(Task_flag == 12)
 	{
 		if(U4_R_Data.Boss_State == 0x01)          
 		{
 			if(U4_R_Data.WC_PIT_R == 3)
 			{
+				test_flag = 2;
 				CW_OR_CCW = 0;
-				Car_data.Motor_Angle = 90;
+				if(Car_Err_flag == 1)
+				{
+					Car_data.Motor_Angle = 85;
+				}
+				else if(Car_Err_flag == 2)
+				{
+					Car_data.Motor_Angle = 95;
+				}
+				else
+				{
+					Car_data.Motor_Angle = 90;
+				}
 			}
 			else
 			{
+				test_flag = 3; 
 				CW_OR_CCW = 1;
-				Car_data.Motor_Angle = 270;
+				if(Car_Err_flag == 1)
+				{
+					Car_data.Motor_Angle = 275;
+				}
+				else if(Car_Err_flag == 2)
+				{
+					Car_data.Motor_Angle = 265;
+				}
+				else
+				{
+					Car_data.Motor_Angle = 270;
+				}
 			}
-			static uint16_t i = 0;
-			i++;
-			if(i > 300)
+			Timer_Delay++;
+			if(Timer_Delay > 250)
 			{
+				Timer_Delay = 0;
 				U4_R_Data.Boss_State = 0;
 				Usart4_send();      //270度转向成功
-				flag = 11;
+				Task_flag = 13;
 			}
 		}
 	}
-	else if(flag == 11)
+	else if(Task_flag == 13)
 	{
 		if(U4_R_Data.Boss_State == 0x01)           //启动小车
 		{
 			CW_OR_CCW = 1;
 			Car_data.Motor_Angle = 90;
 			U4_R_Data.Boss_State = 0;
-			Pos_temp = Car_data.Car_Pos;
+			Yaw_struct.Tar_Yaw = -90.1f;
 			Car_data.Line_speed = Middle_speed;                 
-			flag = 12;
+			Task_flag = 14;
 		}
 	}
-	else if(flag == 12)
+	else if(Task_flag == 14)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 175.0f)
+		if(U4_R_Data.Boss_State == 0x01)         //识别到靶子减速
 		{
-			Car_data.Line_speed = 0;                 //打靶区
-			flag = 13;
+			U4_R_Data.Boss_State = 0x00;
+			Car_data.Line_speed = 0.6f;
+			Task_flag = 15;
 		}
 	}
-	
+	else if(Task_flag == 15)
+	{
+		if(U4_R_Data.Boss_State == 0x01)       
+		{
+			U4_R_Data.Boss_State = 0x00;
+			Car_data.Line_speed = 0;                //停车打靶
+			Task_flag = 16;
+		}
+	}
 /////////////////
-	
-	else if(flag == 13)
+	else if(Task_flag == 16)
 	{
-		//打靶区等待
-		if(U4_R_Data.Boss_State  == 0x01)           
+		if(U4_R_Data.Boss_State  == 0x01)         //再次启动小车
 		{
-			Pos_temp = Car_data.Car_Pos;
-			Car_data.Line_speed = Middle_speed;                 
-			flag = 14;
+			U4_R_Data.Boss_State = 0;
+			Car_data.Line_speed = Middle_speed;     
+			Car_data.Motor_Angle = 70;
+			Task_flag = 17;
 		}
 	}
-	else if(flag == 14)
+	else if(Task_flag == 17)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 37.5f)
+		if(Car_Err_flag == 1)
 		{
-			Car_data.flag_L_R = 2;        //第六处转弯
-			flag = 15;
+			if(Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag_1)
+			{
+				Car_data.flag_L_R = 2;        //第六处转弯
+				Task_flag = 18;
+			}
+		}
+		else if(Car_Err_flag == 2)
+		{
+			if(Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag_2)
+			{
+				Car_data.flag_L_R = 2;        //第六处转弯
+				Task_flag = 18;
+			}
+		}
+		else
+		{
+			if(Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag__Not_1_2)
+			{
+				Car_data.flag_L_R = 2;        //第六处转弯
+				Task_flag = 18;
+			}
 		}
 	}
-	else if(flag == 15)
+	else if(Task_flag == 18)
 	{
 		if(Car_data.flag_L_R == 0)
 		{
+			Yaw_struct.Tar_Yaw = -179.6f;    ///
 			Pos_temp = Car_data.Car_Pos;
-			flag = 16;
+			
+			
+			Car_data.Line_speed = Low_speed;     
+			Task_flag = 19;
 		}
 	}
-	else if(flag == 16)
+	else if(Task_flag == 19)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 60.0f)
+		if(Car_data.Car_Pos >= Pos_temp + People_Help)
 		{
 			Car_data.Line_speed = 0;                 //人质区
-			flag = 17;
+			Timer_Delay++;
+			if(Timer_Delay > 200)
+			{
+				Timer_Delay = 0;
+				Usart4_send();                           //小车已经停止，告诉上单片机
+				Task_flag = 20;
+			}
 		}
 	}
-	else if(flag == 17)
+	else if(Task_flag == 20)
+	{
+		if(U4_R_Data.WC_PIT_R != 0)
+		{
+			Control_Emm_Angle_2();
+			Task_flag = 21;
+		}
+	}
+	else if(Task_flag == 21)
 	{
 		//人质区等待
 		if(U4_R_Data.Boss_State == 0x01)           //启动小车
 		{
 			Pos_temp = Car_data.Car_Pos;
-			Car_data.Line_speed = Middle_speed;                 
-			flag = 18;
-		}
-		static uint16_t i = 0;
-		i++;
-		if(i > 500)
-		{
-			Yaw_struct.Tar_Yaw = -179.8f;
-			Pos_temp = Car_data.Car_Pos;
-			Car_data.Line_speed = Middle_speed;                 
-			flag = 18;
+			Car_data.Line_speed = Middle_speed;      
+			Task_flag = 22;
 		}
 	}
-	else if(flag == 18)
+	else if(Task_flag == 22)
 	{
-		if(Car_data.Car_Pos >= Pos_temp + 170.0f)
+		Timer_Delay++;
+		if(Timer_Delay > 100)
+		{
+			Timer_Delay = 0;
+			Car_data.Motor_Angle = 90;
+		}
+		if(Car_data.Car_Pos >= Pos_temp + End_Stop)
 		{
 			Car_data.Line_speed = 0;                //终点
-			flag = 19;
+			Task_flag = 23;
 		}
 	}
-
 }
-
 //坦克转弯函数，选择左右转，转向角度为90度
 void Car_turn_corner(float Yaw_Current, float Pos_Current)
 {
@@ -307,13 +394,25 @@ void Sport_Car()
 	//闭环控制
 	motors[Motor_0].speed_pid.Current = motors[Motor_0].Parameter.Speed;
 	motors[Motor_1].speed_pid.Current = motors[Motor_1].Parameter.Speed;
-	
-	Position_PID(&motors[Motor_1].speed_pid , motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out);
-	Position_PID(&motors[Motor_0].speed_pid , motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out);
-	
-	Car_data.Motor_L_Out = motors[Motor_1].speed_pid.Out;
-	Car_data.Motor_R_Out = motors[Motor_0].speed_pid.Out;
-	
+	if(lone_turn_flag == 1)
+	{
+		Position_PID(&motors[Motor_0].speed_pid , motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out);
+		Car_data.Motor_L_Out = 0.0f;
+		Car_data.Motor_R_Out = motors[Motor_0].speed_pid.Out;
+	}
+	else if(lone_turn_flag == 2)
+	{
+		Position_PID(&motors[Motor_1].speed_pid , motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out);
+		Car_data.Motor_L_Out = motors[Motor_1].speed_pid.Out;
+		Car_data.Motor_R_Out = 0.0f;
+	}
+	else
+	{
+		Position_PID(&motors[Motor_1].speed_pid , motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out);
+		Position_PID(&motors[Motor_0].speed_pid , motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out);
+		Car_data.Motor_L_Out = motors[Motor_1].speed_pid.Out;
+		Car_data.Motor_R_Out = motors[Motor_0].speed_pid.Out;
+	}
 	//赋予电机
 	uint32_t CCR1 = (uint32_t)fabsf(Car_data.Motor_L_Out);
 	uint32_t CCR2 = (uint32_t)fabsf(Car_data.Motor_R_Out);

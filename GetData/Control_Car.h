@@ -14,14 +14,28 @@
 #include "interurp.h"
 
 
-#define Diameter  15.0f
+
 #define M_PI_F 3.141592653589793f
 
 //定义小车速度
-#define	Low_speed     1.5f
+#define	Low_speed     1.0f
 #define	Middle_speed  2.0f
 #define High_speed    3.0f
 #define Error         2.3f
+
+//各项参数
+#define Turn_1     43.5f
+#define Turn_2     27.0f
+#define Turn_3     64.5f
+#define Turn_4     43.0f
+#define Turn_5     48.0f
+#define Boom_Stop  47.0f
+#define Turn6_Car_Err_flag_1  	       222.5f
+#define Turn6_Car_Err_flag_2           218.5f
+#define Turn6_Car_Err_flag__Not_1_2    220.5f
+#define People_Help   								 79.0f
+#define End_Stop    									 173.0f
+
 
 typedef struct 
 {
