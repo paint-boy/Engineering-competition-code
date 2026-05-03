@@ -30,7 +30,7 @@ PID_TypeDef Emm_pid;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance == TIM4)      //10ms��ʱ��
+	if(htim->Instance == TIM4)     
 	{
 		Car_Control();
 	}
@@ -41,9 +41,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 uint8_t Usart4_send_Buffer[3] = {0};
 uint8_t success_flag = 0;
-void Usart4_send()         						 //ĳһ��ִֻ��һ��
+void Usart4_send()         						
 {
-	//���ϲ�������ͨ�����ݴ���
 	Usart4_send_Buffer[0] = 0x55;
 	Usart4_send_Buffer[1] = 0x01;
 	Usart4_send_Buffer[2] = 0x45;
@@ -55,14 +54,12 @@ uint8_t HWT101_Zero_Buffer3[5] = {0xFF, 0xAA, 0x69, 0x88, 0xB5};
 uint8_t HWT101_Zero_Buffer4[5] = {0xFF, 0xAA, 0x00, 0x00, 0x00};
 void Usart3_send_HWT101_Zero()
 {
-	//�Զ���ȡ��ƫУ�������ǣ���Ҫ�ȴ�20��
-	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer1, sizeof(HWT101_Zero_Buffer1));//����
+	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer1, sizeof(HWT101_Zero_Buffer1));
 	HAL_Delay(1000);
-	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer2, sizeof(HWT101_Zero_Buffer2));//�Զ���ȡ��ƫ
-	HAL_Delay(30000);	
-	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer3, sizeof(HWT101_Zero_Buffer3));//����
+	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer2, sizeof(HWT101_Zero_Buffer2));
+	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer3, sizeof(HWT101_Zero_Buffer3));
 	HAL_Delay(1000);
-	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer4, sizeof(HWT101_Zero_Buffer4));//����
+	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer4, sizeof(HWT101_Zero_Buffer4));
 }
 
 void Uart4_task()
@@ -75,13 +72,13 @@ void Uart4_task()
 			{
 				if(Rxbuffer4[(i+1)%6] == 0x01)
 				{
-					U4_R_Data.Boss_State = 0x01;   //����
+					U4_R_Data.Boss_State = 0x01;   
 				}
 				else if(Rxbuffer4[(i+1)%6] == 0x00)
 				{
 					U4_R_Data.Boss_State = 0x00;   //ֹͣ
 				}
-				U4_R_Data.WC_PIT_R = Rxbuffer4[(i+2)%6];      //���տ�λ
+				U4_R_Data.WC_PIT_R = Rxbuffer4[(i+2)%6];     
 				High_bite = Rxbuffer4[(i+3)%6];
 				Low_bite = Rxbuffer4[(i+4)%6];
 				U4_R_Data.X_data = (High_bite<<8)|Low_bite;
@@ -93,9 +90,9 @@ void Uart4_task()
 }
 
 uint8_t Car_Err_flag = 0;
-void Control_Emm_Angle()         //��λ������õ�ת�̵���ת�Ƕ�
+void Control_Emm_Angle()        
 {
-	if(U4_R_Data.X_data > 370)    //˵�������ұ�
+	if(U4_R_Data.X_data > 370)    
 	{
 		switch(U4_R_Data.WC_PIT_R)
 		{
@@ -137,7 +134,7 @@ void Control_Emm_Angle()         //��λ������õ�ת�̵���
 }
 void Control_Emm_Angle_2() 
 {
-	if(Car_Err_flag == 1)    //˵�������ұ�
+	if(Car_Err_flag == 1)   
 	{
 		switch(U4_R_Data.WC_PIT_R)
 		{
@@ -193,7 +190,7 @@ void UART_Task_Init(void)
 }
 void Uart3_task()
 {
-		/*���������hwt101*/
+		
 		for(uint8_t i = 0; i<22; i++)
 		{
 			if(Rxbuffer3[i] == 0x55 && Rxbuffer3[(i+1)%22] == 0x53)
@@ -213,12 +210,12 @@ void Uart3_task()
 }
 void Uart2_task()
 {
-		//�������ݴ���
+		
 }
 void Uart6_task()
 {
-		//����������ݴ���
-		//hahaha
+		
+
 		
 }
 

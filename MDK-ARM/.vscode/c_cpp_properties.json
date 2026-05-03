@@ -3,20 +3,20 @@
         {
             "name": "panzer",
             "includePath": [
-                "d:\\STM32CubeMX_Project\\panzer\\Core\\Inc",
-                "d:\\STM32CubeMX_Project\\panzer\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
-                "d:\\STM32CubeMX_Project\\panzer\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
-                "d:\\STM32CubeMX_Project\\panzer\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
-                "d:\\STM32CubeMX_Project\\panzer\\Drivers\\CMSIS\\Include",
-                "d:\\STM32CubeMX_Project\\panzer\\GetData",
-                "d:\\STM32CubeMX_Project\\panzer\\Emm_V5",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Core\\Inc",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Drivers\\CMSIS\\Include",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\GetData",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Emm_V5",
                 "C:\\Users\\paint\\AppData\\Local\\Keil_v5\\ARM\\ARMCLANG\\include",
                 "C:\\Users\\paint\\AppData\\Local\\Keil_v5\\ARM\\ARMCLANG\\include\\arm_linux",
                 "C:\\Users\\paint\\AppData\\Local\\Keil_v5\\ARM\\ARMCLANG\\include\\arm_linux_compat",
                 "C:\\Users\\paint\\AppData\\Local\\Keil_v5\\ARM\\ARMCLANG\\include\\libcxx",
-                "d:\\STM32CubeMX_Project\\panzer\\MDK-ARM",
-                "d:\\STM32CubeMX_Project\\panzer\\Core\\Src",
-                "d:\\STM32CubeMX_Project\\panzer\\Drivers\\STM32F4xx_HAL_Driver\\Src"
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\MDK-ARM",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Core\\Src",
+                "d:\\STM32CubeMX_Project\\2025工科赛\\2025年工科赛最终版代码\\panzer\\Drivers\\STM32F4xx_HAL_Driver\\Src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
