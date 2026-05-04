@@ -12,6 +12,8 @@
 #include "Encode.h"
 #include "Emm_V5.h"
 #include "interurp.h"
+#include "Bule_Car_Control.h"
+
 
 
 
@@ -49,6 +51,7 @@ typedef struct
 typedef struct 
 {
 	float Line_speed;
+	float Turn_speed;
   uint8_t flag_L_R;
 	
 	float Car_Pos;
@@ -70,6 +73,7 @@ void Car_turn_corner(float Yaw_Current, float Pos_Current);
 void Car_Drive_route(void);
 void Emm_Pos_Control(float Angle);
 
+extern Parameter_TypeDef_Car Car_data;
 
 extern Yaw_TypeDef Yaw_struct;
 extern uint8_t Boss_State;

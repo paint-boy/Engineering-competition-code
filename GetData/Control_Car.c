@@ -20,9 +20,10 @@ void Yaw_pid_Init()
 // 坦克主控函数
 void Car_Control()
 {
-	//	Car_Drive_route();
-	//	Car_turn_corner(Yaw_struct.Yaw, Car_data.Car_Pos);
-	//	Sport_Car();
+	Bule_Car_Control_Update(&Bule_tooch_Data);
+	// Car_Drive_route();
+	// Car_turn_corner(Yaw_struct.Yaw, Car_data.Car_Pos);
+	Sport_Car();
 }
 uint8_t CW_OR_CCW = 1;
 float Pos_temp2 = 0.0f;
@@ -389,7 +390,7 @@ void Sport_Car()
 	Car_data.Car_Pos = (Car_data.Motor_L_Pos + Car_data.Motor_R_Pos) / 2.0f * 15.0f;
 
 	// 加入航向环控制
-	Yaw_PID_Control();
+	//	Yaw_PID_Control();
 	// 闭环控制
 	motors[Motor_0].speed_pid.Current = motors[Motor_0].Parameter.Speed;
 	motors[Motor_1].speed_pid.Current = motors[Motor_1].Parameter.Speed;
@@ -407,8 +408,8 @@ void Sport_Car()
 	}
 	else
 	{
-		Position_PID(&motors[Motor_1].speed_pid, motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out);
-		Position_PID(&motors[Motor_0].speed_pid, motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out);
+		Position_PID(&motors[Motor_1].speed_pid, motors[Motor_1].Parameter.Tar_Speed + Yaw_struct.Yaw_pid.Out + Car_data.Turn_speed);
+		Position_PID(&motors[Motor_0].speed_pid, motors[Motor_0].Parameter.Tar_Speed - Yaw_struct.Yaw_pid.Out - Car_data.Turn_speed);
 		Car_data.Motor_L_Out = motors[Motor_1].speed_pid.Out;
 		Car_data.Motor_R_Out = motors[Motor_0].speed_pid.Out;
 	}
