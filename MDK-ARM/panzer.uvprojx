@@ -723,6 +723,26 @@
               <FileType>5</FileType>
               <FilePath>..\GetData\Control_Car.h</FilePath>
             </File>
+            <File>
+              <FileName>Bule_Tooch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GetData\Bule_Tooch.c</FilePath>
+            </File>
+            <File>
+              <FileName>Bule_Tooch.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\GetData\Bule_Tooch.h</FilePath>
+            </File>
+            <File>
+              <FileName>Bule_Car_Control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\GetData\Bule_Car_Control.h</FilePath>
+            </File>
+            <File>
+              <FileName>Bule_Car_Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GetData\Bule_Car_Control.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

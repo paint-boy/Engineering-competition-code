@@ -30,18 +30,18 @@ PID_TypeDef Emm_pid;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance == TIM4)     
+	if (htim->Instance == TIM4)
 	{
 		Car_Control();
 	}
-	else if(htim->Instance == TIM5)
+	else if (htim->Instance == TIM5)
 	{
 		Emm_Pos_Control(Car_data.Motor_Angle);
 	}
 }
 uint8_t Usart4_send_Buffer[3] = {0};
 uint8_t success_flag = 0;
-void Usart4_send()         						
+void Usart4_send()
 {
 	Usart4_send_Buffer[0] = 0x55;
 	Usart4_send_Buffer[1] = 0x01;
@@ -66,156 +66,177 @@ void Uart4_task()
 {
 	static uint8_t High_bite = 0;
 	static uint8_t Low_bite = 0;
-		for (uint8_t i = 0; i < 8; i++)
+	for (uint8_t i = 0; i < 8; i++)
+	{
+		if (Rxbuffer4[i] == 0x55 && Rxbuffer4[(i + 5) % 6] == 0x45)
 		{
-			if(Rxbuffer4[i] == 0x55 && Rxbuffer4[(i+5)%6] == 0x45)
+			if (Rxbuffer4[(i + 1) % 6] == 0x01)
 			{
-				if(Rxbuffer4[(i+1)%6] == 0x01)
-				{
-					U4_R_Data.Boss_State = 0x01;   
-				}
-				else if(Rxbuffer4[(i+1)%6] == 0x00)
-				{
-					U4_R_Data.Boss_State = 0x00;   //ֹͣ
-				}
-				U4_R_Data.WC_PIT_R = Rxbuffer4[(i+2)%6];     
-				High_bite = Rxbuffer4[(i+3)%6];
-				Low_bite = Rxbuffer4[(i+4)%6];
-				U4_R_Data.X_data = (High_bite<<8)|Low_bite;
-
-				break;
+				U4_R_Data.Boss_State = 0x01;
 			}
+			else if (Rxbuffer4[(i + 1) % 6] == 0x00)
+			{
+				U4_R_Data.Boss_State = 0x00; // ֹͣ
+			}
+			U4_R_Data.WC_PIT_R = Rxbuffer4[(i + 2) % 6];
+			High_bite = Rxbuffer4[(i + 3) % 6];
+			Low_bite = Rxbuffer4[(i + 4) % 6];
+			U4_R_Data.X_data = (High_bite << 8) | Low_bite;
+
+			break;
 		}
-		U4_R_Data.Boss_State_Last = U4_R_Data.Boss_State;
+	}
+	U4_R_Data.Boss_State_Last = U4_R_Data.Boss_State;
 }
 
 uint8_t Car_Err_flag = 0;
-void Control_Emm_Angle()        
+void Control_Emm_Angle()
 {
-	if(U4_R_Data.X_data > 370)    
+	if (U4_R_Data.X_data > 370)
 	{
-		switch(U4_R_Data.WC_PIT_R)
+		switch (U4_R_Data.WC_PIT_R)
 		{
-			case 1: Car_data.Motor_Angle = 90 + 30;
-						break;
-			case 2: Car_data.Motor_Angle = 85;
-						break;
-			case 3: Car_data.Motor_Angle = 90 - 37;
-						break;
+		case 1:
+			Car_data.Motor_Angle = 90 + 30;
+			break;
+		case 2:
+			Car_data.Motor_Angle = 85;
+			break;
+		case 3:
+			Car_data.Motor_Angle = 90 - 37;
+			break;
 		}
 		Car_Err_flag = 1;
 	}
-	else if(U4_R_Data.X_data < 270)
+	else if (U4_R_Data.X_data < 270)
 	{
-		switch(U4_R_Data.WC_PIT_R)
+		switch (U4_R_Data.WC_PIT_R)
 		{
-			case 1: Car_data.Motor_Angle = 90 + 40;
-						break;
-			case 2: Car_data.Motor_Angle = 95;
-						break;
-			case 3: Car_data.Motor_Angle = 90 - 30;
-						break;
+		case 1:
+			Car_data.Motor_Angle = 90 + 40;
+			break;
+		case 2:
+			Car_data.Motor_Angle = 95;
+			break;
+		case 3:
+			Car_data.Motor_Angle = 90 - 30;
+			break;
 		}
 		Car_Err_flag = 2;
 	}
 	else
 	{
-		switch(U4_R_Data.WC_PIT_R)
+		switch (U4_R_Data.WC_PIT_R)
 		{
-			case 1: Car_data.Motor_Angle = 90 + 33;
-						break;
-			case 2: Car_data.Motor_Angle = 91;
-						break;
-			case 3: Car_data.Motor_Angle = 90 - 33;
-						break;
+		case 1:
+			Car_data.Motor_Angle = 90 + 33;
+			break;
+		case 2:
+			Car_data.Motor_Angle = 91;
+			break;
+		case 3:
+			Car_data.Motor_Angle = 90 - 33;
+			break;
 		}
 		test_flag = 1;
 	}
 }
-void Control_Emm_Angle_2() 
+void Control_Emm_Angle_2()
 {
-	if(Car_Err_flag == 1)   
+	if (Car_Err_flag == 1)
 	{
-		switch(U4_R_Data.WC_PIT_R)
+		switch (U4_R_Data.WC_PIT_R)
 		{
-			case 0: break;
-			
-			case 1: Car_data.Motor_Angle = 90 + 33;
-						break;
-			case 2: Car_data.Motor_Angle = 90;
-						break;
-			case 3: Car_data.Motor_Angle = 90 - 34;
-						break;
+		case 0:
+			break;
+
+		case 1:
+			Car_data.Motor_Angle = 90 + 33;
+			break;
+		case 2:
+			Car_data.Motor_Angle = 90;
+			break;
+		case 3:
+			Car_data.Motor_Angle = 90 - 34;
+			break;
 		}
 	}
-	else if(Car_Err_flag == 2)
+	else if (Car_Err_flag == 2)
 	{
-		switch(U4_R_Data.WC_PIT_R)
+		switch (U4_R_Data.WC_PIT_R)
 		{
-			case 0: break;
-			
-			case 1: Car_data.Motor_Angle = 90 + 34;
-						break;
-			case 2: Car_data.Motor_Angle = 90;
-						break;
-			case 3: Car_data.Motor_Angle = 90 - 33;
-						break;
+		case 0:
+			break;
+
+		case 1:
+			Car_data.Motor_Angle = 90 + 34;
+			break;
+		case 2:
+			Car_data.Motor_Angle = 90;
+			break;
+		case 3:
+			Car_data.Motor_Angle = 90 - 33;
+			break;
 		}
 	}
 	else
 	{
-		switch(U4_R_Data.WC_PIT_R)
+		switch (U4_R_Data.WC_PIT_R)
 		{
-			case 0: break;
-			
-			case 1: Car_data.Motor_Angle = 90 + 34;
-						break;
-			case 2: Car_data.Motor_Angle = 90;
-						break;
-			case 3: Car_data.Motor_Angle = 90 - 34;
-						break;
+		case 0:
+			break;
+
+		case 1:
+			Car_data.Motor_Angle = 90 + 34;
+			break;
+		case 2:
+			Car_data.Motor_Angle = 90;
+			break;
+		case 3:
+			Car_data.Motor_Angle = 90 - 34;
+			break;
 		}
 	}
 }
 void UART_Task_Init(void)
-{ 
-	  HAL_UART_Receive_DMA(&huart2, Rxbuffer2, RXbuffer2_size);
-	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE); 
-	  HAL_UART_Receive_DMA(&huart3, Rxbuffer3, RXbuffer3_size);
-	__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE); 
-	  HAL_UART_Receive_DMA(&huart6, Rxbuffer6, RXbuffer6_size);
-	__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE); 
-		HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
+{
+	HAL_UART_Receive_DMA(&huart2, Rxbuffer2, RXbuffer2_size);
+	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
+	HAL_UART_Receive_DMA(&huart3, Rxbuffer3, RXbuffer3_size);
+	__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
+	HAL_UART_Receive_DMA(&huart6, Rxbuffer6, RXbuffer6_size);
+	__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE);
+	HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
 	__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
 }
 void Uart3_task()
 {
-		
-		for(uint8_t i = 0; i<22; i++)
+	for (uint8_t i = 0; i < 22; i++)
+	{
+		if (Rxbuffer3[i] == 0x55 && Rxbuffer3[(i + 1) % 22] == 0x53)
 		{
-			if(Rxbuffer3[i] == 0x55 && Rxbuffer3[(i+1)%22] == 0x53)
+			YawL = Rxbuffer3[(i + 6) % 22];
+			YawH = Rxbuffer3[(i + 7) % 22];
+			VL = Rxbuffer3[(i + 8) % 22];
+			VH = Rxbuffer3[(i + 9) % 22];
+			Yaw_struct.Yaw = (float)((YawH << 8) | YawL) / 32768 * 180;
+			if (Yaw_struct.Yaw > 180)
 			{
-				YawL = Rxbuffer3[(i + 6)%22];
-				YawH = Rxbuffer3[(i + 7)%22];
-				VL = Rxbuffer3[(i + 8)%22];
-				VH = Rxbuffer3[(i + 9)%22];
-				Yaw_struct.Yaw = (float)((YawH<<8)|YawL)/32768*180;
-				if(Yaw_struct.Yaw > 180)
-				{
-					Yaw_struct.Yaw = -(360.0f - Yaw_struct.Yaw);
-				}
-				break;
+				Yaw_struct.Yaw = -(360.0f - Yaw_struct.Yaw);
 			}
+			break;
 		}
+	}
 }
 void Uart2_task()
 {
-		
+	
+
+
+
+
+
 }
 void Uart6_task()
 {
-		
-
-		
 }
-
