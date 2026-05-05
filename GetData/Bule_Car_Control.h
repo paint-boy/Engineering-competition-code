@@ -6,7 +6,7 @@
 #include "Control_Car.h"
 
 
-void Bule_Car_Control_Update(Bule_tooch *data);
+void Bule_Car_Control_Update(volatile Bule_tooch *data);
 
 
 

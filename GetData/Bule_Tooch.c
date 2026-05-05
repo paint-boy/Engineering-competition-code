@@ -72,6 +72,30 @@ static uint8_t Bule_Tooch_TokenIsChar(const Bule_Tooch_Token *token, char ch)
 }
 
 /**
+ * @brief 判断字段是否等于指定字符串。
+ * @param token 需要判断的字段。
+ * @param str 目标字符串，例如 "open_bule"。
+ * @return 1 表示字段内容等于 str，0 表示不相等。
+ */
+static uint8_t Bule_Tooch_TokenEqualsString(const Bule_Tooch_Token *token, const char *str)
+{
+	const char *p = token->Start;
+
+	while ((p < token->End) && (*str != '\0'))
+	{
+		if (*p != *str)
+		{
+			return 0;
+		}
+
+		p++;
+		str++;
+	}
+
+	return ((p == token->End) && (*str == '\0'));
+}
+
+/**
  * @brief 在缓冲区中查找一帧完整协议包的起止位置。
  * @param buffer 接收缓冲区首地址。
  * @param length 缓冲区有效长度。
@@ -344,6 +368,47 @@ static Bule_Tooch_ParseResult Bule_Tooch_UpdateJoystick(const Bule_Tooch_Token *
 }
 
 /**
+ * @brief 处理按键协议包。
+ * @param tokens 已切分的字段数组，格式应为 k,open_bule,d/u。
+ * @param token_count 字段数量，按键协议必须为 3。
+ * @return Bule_Tooch_ParseResult，成功时会更新 Open_Bule 和 Key_State。
+ */
+static Bule_Tooch_ParseResult Bule_Tooch_UpdateKey(const Bule_Tooch_Token *tokens,
+												   uint8_t token_count)
+{
+	char state = 0;
+
+	if (token_count != 3)
+	{
+		return Bule_Tooch_SaveResult(BULE_TOOCH_PARSE_BAD_FORMAT);
+	}
+
+	if (Bule_Tooch_TokenEqualsString(&tokens[1], "open_bule") == 0)
+	{
+		return Bule_Tooch_SaveResult(BULE_TOOCH_PARSE_BAD_KEY);
+	}
+
+	if ((Bule_Tooch_TokenIsChar(&tokens[2], 'd') == 0) &&
+		(Bule_Tooch_TokenIsChar(&tokens[2], 'u') == 0))
+	{
+		return Bule_Tooch_SaveResult(BULE_TOOCH_PARSE_BAD_KEY);
+	}
+
+	state = tokens[2].Start[0];
+
+	Bule_tooch_Data.Data_Source = 'k';
+	Bule_tooch_Data.Key_Target = 1;
+	Bule_tooch_Data.Key_State = (uint8_t)state;
+	Bule_tooch_Data.Open_Bule = (uint8_t)(state == 'd');
+
+	Bule_tooch_Data.Valid = 1;
+	Bule_tooch_Data.Update_Flag = 1;
+	Bule_tooch_Data.Frame_Count++;
+
+	return Bule_Tooch_SaveResult(BULE_TOOCH_PARSE_OK);
+}
+
+/**
  * @brief 解析一帧蓝牙协议数据。
  * @param buffer 接收缓冲区首地址，内容应包含完整协议包。
  * @param length 缓冲区内有效数据长度，单位为字节。
@@ -388,6 +453,11 @@ Bule_Tooch_ParseResult Bule_Tooch_Parse(const uint8_t *buffer, uint16_t length)
 	if (Bule_Tooch_TokenIsChar(&tokens[0], 'j') != 0)
 	{
 		return Bule_Tooch_UpdateJoystick(tokens, token_count);
+	}
+
+	if (Bule_Tooch_TokenIsChar(&tokens[0], 'k') != 0)
+	{
+		return Bule_Tooch_UpdateKey(tokens, token_count);
 	}
 
 	return Bule_Tooch_SaveResult(BULE_TOOCH_PARSE_BAD_TYPE);

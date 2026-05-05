@@ -12,8 +12,9 @@ typedef enum
 	BULE_TOOCH_PARSE_OK = 0,       /* 解析成功 */
 	BULE_TOOCH_PARSE_NO_FRAME,     /* 没有找到完整的 [ ] 协议包 */
 	BULE_TOOCH_PARSE_BAD_FORMAT,   /* 字段数量或逗号格式错误 */
-	BULE_TOOCH_PARSE_BAD_TYPE,     /* 第一个字段不是 s 或 j */
+	BULE_TOOCH_PARSE_BAD_TYPE,     /* 第一个字段不是 s、j 或 k */
 	BULE_TOOCH_PARSE_BAD_TARGET,   /* 滑杆目标不是 Y/R/P/N */
+	BULE_TOOCH_PARSE_BAD_KEY,      /* 按键字段不是 open_bule，或按键状态不是 d/u */
 	BULE_TOOCH_PARSE_BAD_NUMBER    /* 浮点数字段格式错误 */
 } Bule_Tooch_ParseResult;
 
@@ -22,8 +23,11 @@ typedef struct Bule_tooch
 {
 	uint8_t Valid;          /* 已经成功解析过至少一帧数据 */
 	uint8_t Update_Flag;    /* 新数据标志位，外部读取后调用 Bule_Tooch_ClearUpdateFlag 清零 */
-	uint8_t Data_Source;    /* 数据来源：'s' 表示滑杆，'j' 表示摇杆 */
+	uint8_t Data_Source;    /* 数据来源：'s' 表示滑杆，'j' 表示摇杆，'k' 表示按键 */
 	uint8_t Slider_Target;  /* 滑杆控制目标：Y=Yaw，R=Rool，P=Pitch，N=NDUN */
+	uint8_t Key_Target;     /* 按键目标，1 表示 open_bule */
+	uint8_t Key_State;      /* 按键状态：'d' 表示开启，'u' 表示关闭 */
+	uint8_t Open_Bule;      /* open_bule 当前状态：1 表示开启，0 表示关闭 */
 
 	float Slider_Value;     /* 本次滑杆发送的浮点值 */
 	float Yaw_angle;        /* 最近一次 [s,Y,value] 的 value */

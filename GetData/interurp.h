@@ -46,8 +46,6 @@ void Uart3_task(void);
 void Uart4_task(void);
 void Uart6_task(void);
 void Uart2_task(void);
-void Control_Emm_Angle(void);
-void Control_Emm_Angle_2(void);
 void Usart4_send(void);       						 //某一刻只执行一次
 void Car_task2(void);
 void Usart3_send_HWT101_Zero(void);

@@ -1,7 +1,6 @@
 #include "Control_Car.h"
 
 extern U4_R_data U4_R_Data;
-extern uint8_t Car_Err_flag;
 
 Parameter_TypeDef_Car Car_data;
 
@@ -144,7 +143,7 @@ void Car_Drive_route()
 				Timer_Delay = 0;
 				test_flag = 5;
 				Pos_temp2 = Car_data.Car_Pos;
-				Control_Emm_Angle();
+//				Control_Emm_Angle();
 				Task_flag = 12;
 			}
 		}
@@ -157,35 +156,35 @@ void Car_Drive_route()
 			{
 				test_flag = 2;
 				CW_OR_CCW = 0;
-				if (Car_Err_flag == 1)
-				{
-					Car_data.Motor_Angle = 85;
-				}
-				else if (Car_Err_flag == 2)
-				{
-					Car_data.Motor_Angle = 95;
-				}
-				else
-				{
-					Car_data.Motor_Angle = 90;
-				}
+				// if (Car_Err_flag == 1)
+				// {
+				// 	Car_data.Motor_Angle = 85;
+				// }
+				// else if (Car_Err_flag == 2)
+				// {
+				// 	Car_data.Motor_Angle = 95;
+				// }
+				// else
+				// {
+				// 	Car_data.Motor_Angle = 90;
+				// }
 			}
 			else
 			{
 				test_flag = 3;
 				CW_OR_CCW = 1;
-				if (Car_Err_flag == 1)
-				{
-					Car_data.Motor_Angle = 275;
-				}
-				else if (Car_Err_flag == 2)
-				{
-					Car_data.Motor_Angle = 265;
-				}
-				else
-				{
-					Car_data.Motor_Angle = 270;
-				}
+				// if (Car_Err_flag == 1)
+				// {
+				// 	Car_data.Motor_Angle = 275;
+				// }
+				// else if (Car_Err_flag == 2)
+				// {
+				// 	Car_data.Motor_Angle = 265;
+				// }
+				// else
+				// {
+				// 	Car_data.Motor_Angle = 270;
+				// }
 			}
 			Timer_Delay++;
 			if (Timer_Delay > 250)
@@ -240,30 +239,30 @@ void Car_Drive_route()
 	}
 	else if (Task_flag == 17)
 	{
-		if (Car_Err_flag == 1)
-		{
-			if (Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag_1)
-			{
-				Car_data.flag_L_R = 2; // 第六处转弯
-				Task_flag = 18;
-			}
-		}
-		else if (Car_Err_flag == 2)
-		{
-			if (Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag_2)
-			{
-				Car_data.flag_L_R = 2; // 第六处转弯
-				Task_flag = 18;
-			}
-		}
-		else
-		{
-			if (Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag__Not_1_2)
-			{
-				Car_data.flag_L_R = 2; // 第六处转弯
-				Task_flag = 18;
-			}
-		}
+		// if (Car_Err_flag == 1)
+		// {
+		// 	if (Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag_1)
+		// 	{
+		// 		Car_data.flag_L_R = 2; // 第六处转弯
+		// 		Task_flag = 18;
+		// 	}
+		// }
+		// else if (Car_Err_flag == 2)
+		// {
+		// 	if (Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag_2)
+		// 	{
+		// 		Car_data.flag_L_R = 2; // 第六处转弯
+		// 		Task_flag = 18;
+		// 	}
+		// }
+		// else
+		// {
+		// 	if (Car_data.Car_Pos >= Pos_temp2 + Turn6_Car_Err_flag__Not_1_2)
+		// 	{
+		// 		Car_data.flag_L_R = 2; // 第六处转弯
+		// 		Task_flag = 18;
+		// 	}
+		// }
 	}
 	else if (Task_flag == 18)
 	{
@@ -294,7 +293,7 @@ void Car_Drive_route()
 	{
 		if (U4_R_Data.WC_PIT_R != 0)
 		{
-			Control_Emm_Angle_2();
+//			Control_Emm_Angle_2();
 			Task_flag = 21;
 		}
 	}

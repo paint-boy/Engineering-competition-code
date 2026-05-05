@@ -62,7 +62,7 @@ void Usart3_send_HWT101_Zero()
 	HAL_UART_Transmit_DMA(&huart3, HWT101_Zero_Buffer4, sizeof(HWT101_Zero_Buffer4));
 }
 
-void Uart4_task()
+void Uart4_task()      //和云台通信
 {
 	static uint8_t High_bite = 0;
 	static uint8_t Low_bite = 0;
@@ -89,115 +89,7 @@ void Uart4_task()
 	U4_R_Data.Boss_State_Last = U4_R_Data.Boss_State;
 }
 
-uint8_t Car_Err_flag = 0;
-void Control_Emm_Angle()
-{
-	if (U4_R_Data.X_data > 370)
-	{
-		switch (U4_R_Data.WC_PIT_R)
-		{
-		case 1:
-			Car_data.Motor_Angle = 90 + 30;
-			break;
-		case 2:
-			Car_data.Motor_Angle = 85;
-			break;
-		case 3:
-			Car_data.Motor_Angle = 90 - 37;
-			break;
-		}
-		Car_Err_flag = 1;
-	}
-	else if (U4_R_Data.X_data < 270)
-	{
-		switch (U4_R_Data.WC_PIT_R)
-		{
-		case 1:
-			Car_data.Motor_Angle = 90 + 40;
-			break;
-		case 2:
-			Car_data.Motor_Angle = 95;
-			break;
-		case 3:
-			Car_data.Motor_Angle = 90 - 30;
-			break;
-		}
-		Car_Err_flag = 2;
-	}
-	else
-	{
-		switch (U4_R_Data.WC_PIT_R)
-		{
-		case 1:
-			Car_data.Motor_Angle = 90 + 33;
-			break;
-		case 2:
-			Car_data.Motor_Angle = 91;
-			break;
-		case 3:
-			Car_data.Motor_Angle = 90 - 33;
-			break;
-		}
-		test_flag = 1;
-	}
-}
-void Control_Emm_Angle_2()
-{
-	if (Car_Err_flag == 1)
-	{
-		switch (U4_R_Data.WC_PIT_R)
-		{
-		case 0:
-			break;
 
-		case 1:
-			Car_data.Motor_Angle = 90 + 33;
-			break;
-		case 2:
-			Car_data.Motor_Angle = 90;
-			break;
-		case 3:
-			Car_data.Motor_Angle = 90 - 34;
-			break;
-		}
-	}
-	else if (Car_Err_flag == 2)
-	{
-		switch (U4_R_Data.WC_PIT_R)
-		{
-		case 0:
-			break;
-
-		case 1:
-			Car_data.Motor_Angle = 90 + 34;
-			break;
-		case 2:
-			Car_data.Motor_Angle = 90;
-			break;
-		case 3:
-			Car_data.Motor_Angle = 90 - 33;
-			break;
-		}
-	}
-	else
-	{
-		switch (U4_R_Data.WC_PIT_R)
-		{
-		case 0:
-			break;
-
-		case 1:
-			Car_data.Motor_Angle = 90 + 34;
-			break;
-		case 2:
-			Car_data.Motor_Angle = 90;
-			break;
-		case 3:
-			Car_data.Motor_Angle = 90 - 34;
-			break;
-		}
-	}
-}
 void UART_Task_Init(void)
 {
 	HAL_UART_Receive_DMA(&huart2, Rxbuffer2, RXbuffer2_size);
@@ -209,7 +101,7 @@ void UART_Task_Init(void)
 	HAL_UART_Receive_DMA(&huart4, Rxbuffer4, RXbuffer4_size);
 	__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
 }
-void Uart3_task()
+void Uart3_task()   //HWT101角度解析
 {
 	for (uint8_t i = 0; i < 22; i++)
 	{
