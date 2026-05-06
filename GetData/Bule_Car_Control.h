@@ -7,6 +7,7 @@
 
 
 void Bule_Car_Control_Update(volatile Bule_tooch *data);
+void bule_car_key(Bule_tooch *data);
 
 
 

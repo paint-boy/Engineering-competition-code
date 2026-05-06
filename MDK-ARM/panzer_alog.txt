@@ -6,7 +6,7 @@
 [Found keyword]: ----------Execution Region----------
 [name]:  ER_IROM1 
 [Exec base]: 0x8000000
-[Size]: 0x6ee8
+[Size]: 0x6edc
 [Max]: 0x100000
 [Found keyword]: ----------Execution Region----------
 [name]:  RW_IRAM1 
@@ -24,7 +24,7 @@
   RW_IRAM2 :0x2001c000
    16.00 KB :|____________________|    0.00 % (    0.00 KB /    16.00 KB) [16384 B]
   ER_IROM1 :0x8000000
-    1.00 MB :|____________________|    2.71 % (    0.03 MB /     1.00 MB) [1020184 B]
+    1.00 MB :|____________________|    2.71 % (    0.03 MB /     1.00 MB) [1020196 B]
 [export csv]: ./panzer_sort_by_flash.csv
 [export csv]: ./panzer_sort_by_ram.csv
 [export xlsx]: panzer_analysis.xlsx

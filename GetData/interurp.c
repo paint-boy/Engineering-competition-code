@@ -70,20 +70,10 @@ void Uart4_task()      //和云台通信
 	{
 		if (Rxbuffer4[i] == 0x55 && Rxbuffer4[(i + 5) % 6] == 0x45)
 		{
-			if (Rxbuffer4[(i + 1) % 6] == 0x01)
-			{
-				U4_R_Data.Boss_State = 0x01;
-			}
-			else if (Rxbuffer4[(i + 1) % 6] == 0x00)
-			{
-				U4_R_Data.Boss_State = 0x00; // 停止
-			}
-			U4_R_Data.WC_PIT_R = Rxbuffer4[(i + 2) % 6];
-			High_bite = Rxbuffer4[(i + 3) % 6];
-			Low_bite = Rxbuffer4[(i + 4) % 6];
+			High_bite = Rxbuffer4[(i + 1) % 6];
+			Low_bite = Rxbuffer4[(i + 2) % 6];
+			U4_R_Data.Boss_State = Rxbuffer4[(i + 3) % 6];
 			U4_R_Data.X_data = (High_bite << 8) | Low_bite;
-
-			break;
 		}
 	}
 	U4_R_Data.Boss_State_Last = U4_R_Data.Boss_State;

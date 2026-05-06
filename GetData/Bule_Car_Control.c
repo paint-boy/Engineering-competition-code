@@ -19,14 +19,10 @@ void bule_car_key(Bule_tooch *data)
         if (Bule_tooch_Data.Open_Bule)
         {
             Bule_Car_Control_Update(&Bule_tooch_Data);
-
-            //要加上状态过渡
         }
         else
         {
-
-
-
+            Yaw_PID_Control();
         }
 
         Bule_Tooch_ClearUpdateFlag();
@@ -37,9 +33,6 @@ void Bule_Car_Control_Update(volatile Bule_tooch *data)
 {
     static uint32_t Last_Cloud_Frame_Count = 0;
     uint8_t Need_Send_Cloud = 0;
-
-    (void)data;
-
     if (Bule_tooch_Data.Data_Source == 's')
     {
         if (Bule_tooch_Data.Slider_Target == 'Y')
@@ -78,8 +71,5 @@ void Bule_Car_Control_Update(volatile Bule_tooch *data)
         Car_data.Turn_speed = Bule_tooch_Data.Joystick_1;
         Car_data.Line_speed = Bule_tooch_Data.Joystick_2;
     }
-
     (void)USART_Send_Cloud_Task();
 }
-
-
