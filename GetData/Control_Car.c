@@ -20,6 +20,8 @@ void Yaw_pid_Init()
 void Car_Control()
 {
 	Bule_Car_Control_Update(&Bule_tooch_Data);
+	
+
 	// Car_Drive_route();
 	// Car_turn_corner(Yaw_struct.Yaw, Car_data.Car_Pos);
 	Sport_Car();
@@ -118,7 +120,7 @@ void Car_Drive_route()
 		{
 			Car_data.Line_speed = Low_speed;
 			Usart4_send();				  // 转弯成功
-			Car_data.Motor_Angle = 90.0f; // 转盘旋转90度
+//			Car_data.Motor_Angle = 90.0f; // 转盘旋转90度
 			Pos_temp = Car_data.Car_Pos;
 			Task_flag = 10;
 		}
@@ -201,7 +203,7 @@ void Car_Drive_route()
 		if (U4_R_Data.Boss_State == 0x01) // 启动小车
 		{
 			CW_OR_CCW = 1;
-			Car_data.Motor_Angle = 90;
+//			Car_data.Motor_Angle = 90;
 			U4_R_Data.Boss_State = 0;
 			Yaw_struct.Tar_Yaw = -90.1f;
 			Car_data.Line_speed = Middle_speed;
@@ -233,7 +235,7 @@ void Car_Drive_route()
 		{
 			U4_R_Data.Boss_State = 0;
 			Car_data.Line_speed = Middle_speed;
-			Car_data.Motor_Angle = 70;
+//			Car_data.Motor_Angle = 70;
 			Task_flag = 17;
 		}
 	}
@@ -313,7 +315,7 @@ void Car_Drive_route()
 		if (Timer_Delay > 100)
 		{
 			Timer_Delay = 0;
-			Car_data.Motor_Angle = 90;
+//			Car_data.Motor_Angle = 90;
 		}
 		if (Car_data.Car_Pos >= Pos_temp + End_Stop)
 		{
@@ -367,9 +369,18 @@ void ResetHWT101(void)
 }
 void Emm_Pos_Control(float Angle)
 {
+	if(Angle > 0)
+	{
+		CW_OR_CCW = 0;
+	}
+	else
+	{
+		CW_OR_CCW = 1;
+		Angle = fabsf(Angle);
+	}
 	static uint32_t Angle_Tick = 0;
-	Angle_Tick = (uint32_t)(1208.888 * Angle);
-	Emm_V5_Pos_Control(1, CW_OR_CCW, 180, 0, Angle_Tick, true, false);
+	Angle_Tick = (uint32_t)(76.0f* Angle);
+	Emm_V5_Pos_Control(2, CW_OR_CCW, 50, 0, Angle_Tick, true, false);
 }
 
 // 小车运动

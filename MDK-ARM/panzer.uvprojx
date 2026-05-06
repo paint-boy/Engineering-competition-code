@@ -743,6 +743,16 @@
               <FileType>1</FileType>
               <FilePath>..\GetData\Bule_Car_Control.c</FilePath>
             </File>
+            <File>
+              <FileName>USART_Send_Cloud.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GetData\USART_Send_Cloud.c</FilePath>
+            </File>
+            <File>
+              <FileName>USART_Send_Cloud.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\GetData\USART_Send_Cloud.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

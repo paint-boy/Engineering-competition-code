@@ -30,6 +30,7 @@
 "panzer\control_car.o"
 "panzer\bule_tooch.o"
 "panzer\bule_car_control.o"
+"panzer\usart_send_cloud.o"
 "panzer\emm_v5.o"
 --library_type=microlib --strict --scatter "panzer\panzer.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols

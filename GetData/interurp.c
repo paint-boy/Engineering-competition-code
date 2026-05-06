@@ -36,7 +36,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 	else if (htim->Instance == TIM5)
 	{
-		Emm_Pos_Control(Car_data.Motor_Angle);
+		Emm_Pos_Control(Car_data.Yaw_Angle);
 	}
 }
 uint8_t Usart4_send_Buffer[3] = {0};

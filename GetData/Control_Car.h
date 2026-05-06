@@ -59,7 +59,14 @@ typedef struct
 	float Motor_R_Pos;
 	float Motor_L_Out;
 	float Motor_R_Out;
-	float Motor_Angle;
+	float Yaw_Angle;
+	float Rool_Angle;
+	float Pitch_Angle;
+	float NDUN_Power;          
+
+	float set_angle;
+
+
 	
 }Parameter_TypeDef_Car;
 
